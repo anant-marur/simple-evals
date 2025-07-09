@@ -235,28 +235,36 @@ def main():
         ),
     }
 
-    if args.list_models:
-        print("Available models:")
-        for model_name in models.keys():
-            print(f" - {model_name}")
-        return
+    # if args.list_models:
+    #     print("Available models:")
+    #     for model_name in models.keys():
+    #         print(f" - {model_name}")
+    #     return
 
-    if args.model:
-        models_chosen = args.model.split(",")
-        for model_name in models_chosen:
-            if model_name not in models:
-                print(f"Error: Model '{model_name}' not found.")
-                return
-        models = {model_name: models[model_name] for model_name in models_chosen}
+    # if args.model:
+    #     models_chosen = args.model.split(",")
+    #     for model_name in models_chosen:
+    #         if model_name not in models:
+    #             print(f"Error: Model '{model_name}' not found.")
+    #             return
+    #     models = {model_name: models[model_name] for model_name in models_chosen}
+    model_name = "PRECOG_MODEL"
+    models = {
+        args.model: ChatCompletionSampler(
+            model="PRECOG_MODEL",
+            system_message=OPENAI_SYSTEM_MESSAGE_API,
+            max_tokens=2048,
+        )
+    }
 
     print(f"Running with args {args}")
 
     grading_sampler = ChatCompletionSampler(
-        model="gpt-4.1-2025-04-14",
+        model="openai/gpt-4.1-2025-04-14",
         system_message=OPENAI_SYSTEM_MESSAGE_API,
         max_tokens=2048,
     )
-    equality_checker = ChatCompletionSampler(model="gpt-4-turbo-preview")
+    equality_checker = ChatCompletionSampler(model="openai/gpt-4-turbo-preview")
     # ^^^ used for fuzzy matching, just for math
 
     def get_evals(eval_name, debug_mode):
