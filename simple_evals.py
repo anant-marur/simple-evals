@@ -336,7 +336,7 @@ def main():
                 evals[eval_name] = get_evals(eval_name, args.debug)
             except Exception:
                 print(f"Error: eval '{eval_name}' not found.")
-                return
+                raise e
     else:
         evals = {
             eval_name: get_evals(eval_name, args.debug)
