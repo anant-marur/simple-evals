@@ -6,15 +6,6 @@ from datetime import datetime
 import pandas as pd
 
 from . import common
-from .browsecomp_eval import BrowseCompEval
-from .drop_eval import DropEval
-from .gpqa_eval import GPQAEval
-from .healthbench_eval import HealthBenchEval
-from .healthbench_meta_eval import HealthBenchMetaEval
-from .math_eval import MathEval
-from .mgsm_eval import MGSMEval
-from .mmlu_eval import MMLUEval
-from .humaneval_eval import HumanEval
 from .sampler.chat_completion_sampler import (
     OPENAI_SYSTEM_MESSAGE_API,
     OPENAI_SYSTEM_MESSAGE_CHATGPT,
@@ -23,7 +14,6 @@ from .sampler.chat_completion_sampler import (
 from .sampler.claude_sampler import ClaudeCompletionSampler, CLAUDE_SYSTEM_MESSAGE_LMSYS
 from .sampler.o_chat_completion_sampler import OChatCompletionSampler
 from .sampler.responses_sampler import ResponsesSampler
-from .simpleqa_eval import SimpleQAEval
 
 
 def main():
@@ -235,19 +225,7 @@ def main():
         ),
     }
 
-    # if args.list_models:
-    #     print("Available models:")
-    #     for model_name in models.keys():
-    #         print(f" - {model_name}")
-    #     return
 
-    # if args.model:
-    #     models_chosen = args.model.split(",")
-    #     for model_name in models_chosen:
-    #         if model_name not in models:
-    #             print(f"Error: Model '{model_name}' not found.")
-    #             return
-    #     models = {model_name: models[model_name] for model_name in models_chosen}
     model_name = "PRECOG_MODEL"
     models = {
         args.model: ChatCompletionSampler(
@@ -274,40 +252,49 @@ def main():
         # Set num_examples = None to reproduce full evals
         match eval_name:
             case "mmlu":
+                from .mmlu_eval import MMLUEval
                 return MMLUEval(num_examples=1 if debug_mode else num_examples)
             case "math":
+                from .math_eval import MathEval
                 return MathEval(
                     equality_checker=equality_checker,
                     num_examples=num_examples,
                     n_repeats=1 if debug_mode else args.n_repeats or 10,
                 )
             case "gpqa":
+                from .gpqa_eval import GPQAEval
                 return GPQAEval(
                     n_repeats=1 if debug_mode else args.n_repeats or 10,
                     num_examples=num_examples,
                 )
             case "mgsm":
+                from .mgsm_eval import MGSMEval
                 return MGSMEval(
                     num_examples_per_lang=10 if debug_mode else num_examples or 250
                 )
             case "drop":
+                from .drop_eval import DropEval
                 return DropEval(
                     num_examples=10 if debug_mode else num_examples,
                     train_samples_per_prompt=3,
                 )
             case "humaneval":
+                from .humaneval_eval import HumanEval
                 return HumanEval(num_examples=10 if debug_mode else num_examples)
             case "simpleqa":
+                from .simpleqa_eval import SimpleQAEval
                 return SimpleQAEval(
                     grader_model=grading_sampler,
                     num_examples=10 if debug_mode else num_examples,
                 )
             case "browsecomp":
+                from .browsecomp_eval import BrowseCompEval
                 return BrowseCompEval(
                     grader_model=grading_sampler,
                     num_examples=10 if debug_mode else num_examples,
                 )
             case "healthbench":
+                from .healthbench_eval import HealthBenchEval
                 return HealthBenchEval(
                     grader_model=grading_sampler,
                     num_examples=10 if debug_mode else num_examples,
@@ -316,6 +303,7 @@ def main():
                     subset_name=None,
                 )
             case "healthbench_hard":
+                from .healthbench_eval import HealthBenchEval
                 return HealthBenchEval(
                     grader_model=grading_sampler,
                     num_examples=10 if debug_mode else num_examples,
@@ -324,6 +312,7 @@ def main():
                     subset_name="hard",
                 )
             case "healthbench_consensus":
+                from .healthbench_eval import HealthBenchEval
                 return HealthBenchEval(
                     grader_model=grading_sampler,
                     num_examples=10 if debug_mode else num_examples,
@@ -332,6 +321,7 @@ def main():
                     subset_name="consensus",
                 )
             case "healthbench_meta":
+                from .healthbench_meta_eval import HealthBenchMetaEval
                 return HealthBenchMetaEval(
                     grader_model=grading_sampler,
                     num_examples=10 if debug_mode else num_examples,
