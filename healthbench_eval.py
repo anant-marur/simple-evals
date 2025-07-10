@@ -188,6 +188,14 @@ def get_usage_dict(response_usage) -> dict[str, int | None]:
             else response_usage.completion_tokens_details["reasoning_tokens"],
             "total_tokens": response_usage.total_tokens,
         }
+    except Exception:
+        return {
+            "input_tokens": None,
+            "input_cached_tokens": None,
+            "output_tokens": None,
+            "output_reasoning_tokens": None,
+            "total_tokens": None,
+        }
 
 
 PHYSICIAN_COMPLETION_MODES = {
