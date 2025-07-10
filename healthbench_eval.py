@@ -21,8 +21,8 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from typing import Literal
+import urllib
 
-import blobfile as bf
 import numpy as np
 import pandas as pd
 
@@ -292,7 +292,7 @@ class HealthBenchEval(Eval):
             input_path = INPUT_PATH
         else:
             assert False, f"Invalid subset name: {subset_name}"
-        with bf.BlobFile(input_path, "rb") as f:
+        with urllib.request.urlopen(input_path) as f:
             examples = [json.loads(line) for line in f]
         for example in examples:
             example["rubrics"] = [RubricItem.from_dict(d) for d in example["rubrics"]]
