@@ -176,18 +176,6 @@ def get_usage_dict(response_usage) -> dict[str, int | None]:
             else response_usage.output_tokens_details["reasoning_tokens"],
             "total_tokens": response_usage.total_tokens,
         }
-    except AttributeError:
-        return {
-            "input_tokens": response_usage.prompt_tokens,
-            "input_cached_tokens": response_usage.prompt_tokens_details.cached_tokens
-            if hasattr(response_usage.prompt_tokens_details, "cached_tokens")
-            else response_usage.prompt_tokens_details["cached_tokens"],
-            "output_tokens": response_usage.completion_tokens,
-            "output_reasoning_tokens": response_usage.completion_tokens_details.reasoning_tokens
-            if hasattr(response_usage.completion_tokens_details, "reasoning_tokens")
-            else response_usage.completion_tokens_details["reasoning_tokens"],
-            "total_tokens": response_usage.total_tokens,
-        }
     except Exception:
         return {
             "input_tokens": None,
