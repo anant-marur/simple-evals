@@ -85,11 +85,11 @@ class ChatCompletionSampler(SamplerBase):
                     response_metadata={"usage": None},
                     actual_queried_message_list=message_list,
                 )
-            except Exception as e:
+            except (openai.RateLimitError, openai.APITimeoutError) as e:
                 exception_backoff = 2**trial  # expontial back off
                 print(
-                    f"Rate limit exception so wait and retry {trial} after {exception_backoff} sec",
-                    e,
+                    f"Rate limit exception on attempt {trial}. Retrying after {exception_backoff}s.",
+                    f"Error: {e}",
                 )
                 time.sleep(exception_backoff)
                 trial += 1
