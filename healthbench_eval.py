@@ -21,8 +21,8 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from typing import Literal
+import urllib
 
-import blobfile as bf
 import numpy as np
 import pandas as pd
 
@@ -176,17 +176,13 @@ def get_usage_dict(response_usage) -> dict[str, int | None]:
             else response_usage.output_tokens_details["reasoning_tokens"],
             "total_tokens": response_usage.total_tokens,
         }
-    except AttributeError:
+    except Exception:
         return {
-            "input_tokens": response_usage.prompt_tokens,
-            "input_cached_tokens": response_usage.prompt_tokens_details.cached_tokens
-            if hasattr(response_usage.prompt_tokens_details, "cached_tokens")
-            else response_usage.prompt_tokens_details["cached_tokens"],
-            "output_tokens": response_usage.completion_tokens,
-            "output_reasoning_tokens": response_usage.completion_tokens_details.reasoning_tokens
-            if hasattr(response_usage.completion_tokens_details, "reasoning_tokens")
-            else response_usage.completion_tokens_details["reasoning_tokens"],
-            "total_tokens": response_usage.total_tokens,
+            "input_tokens": None,
+            "input_cached_tokens": None,
+            "output_tokens": None,
+            "output_reasoning_tokens": None,
+            "total_tokens": None,
         }
 
 
@@ -292,7 +288,7 @@ class HealthBenchEval(Eval):
             input_path = INPUT_PATH
         else:
             assert False, f"Invalid subset name: {subset_name}"
-        with bf.BlobFile(input_path, "rb") as f:
+        with urllib.request.urlopen(input_path) as f:
             examples = [json.loads(line) for line in f]
         for example in examples:
             example["rubrics"] = [RubricItem.from_dict(d) for d in example["rubrics"]]
